@@ -4,13 +4,14 @@
 #include <string>
 #include <map>
 #include <memory>
+#include "ContainerItem.h"
 
 namespace Game
 {
 
 	class Area;
 //	class Item;
-	class ContainerItem;
+//	class ContainerItem;
 	class Keepable;
 	enum class state_t { DEAD, FIGHTING, IDLE };
 	enum class element_t { FIRE, FROST, PHYSICAL, SHADOW };
@@ -50,9 +51,6 @@ namespace Game
 			int _frost_resistance;
 			int _shadow_resistance;
 
-			
-//			std::vector<Item> _items;
-
 		public:
 
 			state_t state = state_t::IDLE;
@@ -87,7 +85,6 @@ namespace Game
 			bool stuck () const { return _stuck; }
 
 			std::shared_ptr <Area> area () const { return _area; }
-//			std::vector<Item> items () const;
 
 			/** --- SETTERS --- **/
 

@@ -3,8 +3,9 @@
 
 namespace Game
 {
-	ContainerItem::ContainerItem () 
+	ContainerItem::ContainerItem () : Item ()
 	{
+		_name = static_cast<std::string>("Bag");
 		_weight = 1;
 		_volume = 15;	
 		_price = 0;
@@ -31,7 +32,7 @@ namespace Game
 			if (item.volume () + _current_hold_volume <= _hold_volume)
 			{
 				auto inserted = _container.insert (
-								std::pair<std::string, Item &> (item.name (), item));
+								std::pair<std::string, Keepable &> (item.name (), item));
 				if (inserted.second)
 				{
 					_weight += item.weight ();

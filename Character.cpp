@@ -1,13 +1,13 @@
 #include "Character.h"
 #include "Area.h"
-#include "ContainerItem.h"
+//#include "ContainerItem.h"
 #include <iostream>
 #include <cctype>
 
 namespace Game
 {
 
-	Character::Character () { }
+	Character::Character () {_bag = ContainerItem(); }
 
 	Character::Character (const Character & other)
 	{
@@ -22,8 +22,7 @@ namespace Game
 		_fire_resistance = other._fire_resistance;
 		_frost_resistance = other._frost_resistance;
 		_shadow_resistance = other._shadow_resistance;
-
-//		_items = other._items;
+		_bag = other._bag;
 
 	}
 
