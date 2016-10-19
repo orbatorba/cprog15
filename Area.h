@@ -10,6 +10,7 @@ namespace Game
 {
 	enum class direction_t;
 	class Character;
+	class Keepable;
 	class Area
 	{
 
@@ -19,7 +20,7 @@ namespace Game
 			std::string _description;
 
 			std::map <direction_t, std::shared_ptr <Area>> _neighbors;
-			//std::map <std::string, Item &> _items;
+			std::map <std::string, Keepable &> _items;
 			std::map <std::string, Character &> _characters;
 
 		public:
@@ -45,14 +46,12 @@ namespace Game
 
 			virtual void enter (Character &);
 			virtual void leave (Character &);
-
+			
 			virtual void clear_neighbors ();
-
-			//virtual void pick_up (Item &);
-			//virtual void drop (Item &);
-
-
-
+			
+			virtual void add_item (Keepable &);
+			virtual void drop_item (Keepable &);
+			virtual Keepable & get_item (std::string);
 
 	};
 }

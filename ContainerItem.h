@@ -26,6 +26,7 @@ namespace Game
 			virtual bool remove (Keepable &);
 			virtual bool contains (std::string &);
 			//virtual Keepable & get_item (std::string &);
+			virtual std::map <std::string, Keepable &> get_container() { return _container; }
 			virtual void list_items ();
 
 	};

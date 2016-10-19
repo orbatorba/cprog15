@@ -27,6 +27,7 @@ static void initialize ();
 static void cleanup_characters ();
 static void cleanup_areas ();
 static void delete_characters ();
+static void cleanup_items ();
 
 int main (int argc, char* argv[])
 {
@@ -93,11 +94,24 @@ int main (int argc, char* argv[])
 
 					break;
 
+				case Actions::Take:
+					
+					try
+					{
+						_player->pick_up (_player->area()->get_item (what_action));	
+					}
+					catch (std::out_of_range e)
+					{
+						std::cout << "Can't pick up that!" << std::endl;
+					}
+					break;
+
 				case Actions::Quit:
 					std::cout << "You had a good run! Thank you for playing." << std::endl;
 			//		cleanup_characters ();
 					delete_characters ();
 					cleanup_areas ();
+					cleanup_items ();
 					running = false;
 					break;
 
@@ -113,8 +127,12 @@ int main (int argc, char* argv[])
 		}
 
 		if (_player->state == state_t::DEAD)
+		{
+			delete_characters ();
+			cleanup_areas ();
+			cleanup_items ();
 			running = false;
-
+		}
 		cleanup_characters ();
 	}
 
@@ -124,7 +142,7 @@ int main (int argc, char* argv[])
 
 void initialize ()
 {
-/* ---- CREATE AREAS ---*/
+	/* ---- CREATE AREAS ---*/
 	std::string area1 = "Val'Sharath";
 	std::string desc1 = "These woods once flourished, inhabited by mysterious creatures and guarded by the Night Elfs known as the Druids of the Moon. The once beautiful harmony between nature, beast and being was shattered by the Dark Legion during the invasion. Now all that is left is a dark forest with ruins of the once great citadel of the Night Elf, Darnassus.";
 	std::string area2 = "Darkwood";
@@ -135,7 +153,7 @@ void initialize ()
 	std::shared_ptr <Area> _azsuna (new Area (static_cast<std::string> ("Azsuna"),
 	static_cast <std::string> ("The Eastern shores of Broken Isles, occupated by hostile Nagas resisting the Dark Legion. The Nagas are known for their cunning in witchcraft and embraces the power of Frozen magic. ")));
 
-/*	-----	CREATE CHARACTERS ----*/
+	/* -----	CREATE CHARACTERS ----*/
 	std::string name = "Merlin";
 	std::string race = "Human";
 	std::string name2 = "Thelryssa";
@@ -179,8 +197,17 @@ void initialize ()
 	std::shared_ptr <Keepable> _tome_of_secrets (new Keepable (static_cast<std::string>(
 	"Tome of Secrets"), 1, 1, 10, 0, 20, 20, 20));
 
+	std::shared_ptr <Keepable> _dragon_tear (new Keepable (static_cast<std::string>("Tear"),
+	1, 1, 10, 0, 10, 5, 5));
+
 	_player->pick_up (*_frostfire_blade);
 	_player->pick_up (*_tome_of_secrets); 
+
+	_dragon->pick_up (*_dragon_tear);
+
+	_items.push_back (_frostfire_blade);
+	_items.push_back (_tome_of_secrets);
+	_items.push_back (_dragon_tear);
 		
 	/*	---- ASSIGN ENUMS TO MAPS FOR INPUT PARSING ---- */
 
@@ -261,4 +288,9 @@ void delete_characters ()
 	
 	_characters.clear ();
 
+}
+
+void cleanup_items ()
+{
+	_items.clear ();
 }

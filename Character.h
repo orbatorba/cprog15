@@ -109,6 +109,8 @@ namespace Game
 			virtual void damage_taken (int);
 			virtual void spell_dmg_taken (int, element_t);
 			virtual void display_stats () const;
+			virtual void die ();
+			virtual void drop_all_items ();
 
 //			virtual void action () = 0;
 			virtual void go (direction_t);

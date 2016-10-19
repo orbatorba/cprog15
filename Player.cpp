@@ -168,7 +168,8 @@ namespace Game
 
 			if (other.health () <= 0)
 			{
-				other.state = state_t::DEAD;
+				//other.state = state_t::DEAD;
+				other.die ();
 				std::cout << "You have defeated " << other.name () << " in combat!" << std::endl;
 				this->state = state_t::IDLE;
 				break;

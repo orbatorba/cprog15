@@ -168,6 +168,22 @@ namespace Game
 		std::cout << "" << std::endl;
 
 	}
+	
+	void Character::die ()
+	{
+		drop_all_items ();
+		state = state_t::DEAD;
+	}
+
+	void Character::drop_all_items ()
+	{
+		std::map <std::string, Keepable &> bag = _bag.get_container ();
+		for (auto it = bag.begin (); it != bag.end(); ++it)
+		{
+			_area->add_item (it->second);
+			std::cout << _name << " dropped " << it->second.name() << "!" << std::endl;
+		}
+	}
 
 	void Character::go (direction_t dir)
 	{

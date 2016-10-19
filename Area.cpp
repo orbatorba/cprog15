@@ -97,4 +97,22 @@ namespace Game
 		_neighbors.clear();
 	}
 
+	void Area::add_item (Keepable & item)
+	{
+	//	_items[item.name()] = item;
+		auto inserted = _items.insert (std::pair < std::string, Keepable &> (item.name(), item));
+		if (!inserted.second)
+			std::cout << _name << " couldn't keep track of the item... " << std::endl;
+	}
+
+	void Area::drop_item (Keepable & item)
+	{
+		_items.erase (item.name ());
+	}
+
+	Keepable & Area::get_item (std::string name)
+	{
+		return _items.at (name);
+	}
+
 }
