@@ -191,12 +191,28 @@ namespace Game
 
 	}
 
-	bool Player::pick_up (Keepable &)
+	bool Player::pick_up (Keepable & item)
 	{
 		if (_bag.add (item))
 		{
 			std::cout << "You picked up " << item.name () << "!" << std::endl;
+			_spell_power += item.spell_power ();
+			_attack_power += item.attack_power ();
+			hitpoints += item.health_points ();
+			_mana += item.mana_points ();
 			
+		}
+	}
+
+	bool Player::drop (Keepable & item)
+	{
+		if (_bag.remove (item))
+		{
+			std::cout << "You dropped " << item.name () << "!" << std::endl;
+			_spell_power -= item.spell_power ();
+			_attack_power -= item.attack_power ();
+			hitpoints -= item.health_points ();
+			_mana -= item.mana_points ();
 		}
 	}
 

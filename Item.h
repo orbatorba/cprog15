@@ -1,6 +1,6 @@
 #ifndef ITEM_H
 #define ITEM_h
-#include "Enums.h"
+//#include "Enums.h"
 #include <string>
 #include <iostream>
 
@@ -21,7 +21,8 @@ namespace Game
 			Item (const Item &);
 			Item (const std::string &, unsigned int, unsigned int, unsigned int);
 			virtual ~Item ();
-
+			
+			virtual const std::string & name () const { return _name; } 
 			virtual unsigned int weight () const { return _weight; }
 			virtual unsigned int volume () const { return _volume; }
 			virtual unsigned int price () const { return _price; }

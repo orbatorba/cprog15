@@ -9,7 +9,7 @@ namespace Game
 {
 
 	class Area;
-	class Item;
+//	class Item;
 	class ContainerItem;
 	class Keepable;
 	enum class state_t { DEAD, FIGHTING, IDLE };
@@ -62,8 +62,9 @@ namespace Game
 
 			Character ();
 			Character (const Character &);
-			Character (const std::string &name, const std::string &race, int hp, int armor, int damage,
-						int stam, std::shared_ptr <Area> area, int fire_res = 0, int frost_res = 0, int shadow_res = 0);
+			Character (const std::string &name, const std::string &race, int hp, int armor, 
+						int damage, int stam, std::shared_ptr <Area> area,
+						int fire_res = 0, int frost_res = 0, int shadow_res = 0);
 
 			virtual ~Character ();
 

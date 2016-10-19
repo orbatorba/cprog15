@@ -1,6 +1,5 @@
 #include "Dragon.h"
 #include "Area.h"
-#include "Item.h"
 #include "ContainerItem.h"
 #include <iostream>
 #include <string>

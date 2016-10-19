@@ -1,7 +1,5 @@
 #include "Character.h"
 #include "Area.h"
-#include "Item.h"
-#include "Keepable.h"
 #include "ContainerItem.h"
 #include <iostream>
 #include <cctype>
