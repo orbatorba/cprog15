@@ -97,8 +97,8 @@ namespace Game
 									continue;
 								}
 
-								other.spell_dmg_taken(_spells["Frostbolt"].damage,
-														 element_t::FROST);
+								other.spell_dmg_taken(_spells["Frostbolt"].damage + _spell_power,
+														element_t::FROST);
 								this->_mana -= _spells["Frostbolt"].mana_cost;
 								break;
 

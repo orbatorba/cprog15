@@ -21,6 +21,7 @@ static std::shared_ptr <Player> _player;
 
 static std::vector <std::shared_ptr<Area>> _areas;
 static std::vector<std::shared_ptr<Character>> _characters;
+static std::vector <std::shared_ptr <Item>> _items;
 
 static void initialize ();
 static void cleanup_characters ();
@@ -123,6 +124,7 @@ int main (int argc, char* argv[])
 
 void initialize ()
 {
+/* ---- CREATE AREAS ---*/
 	std::string area1 = "Val'Sharath";
 	std::string desc1 = "These woods once flourished, inhabited by mysterious creatures and guarded by the Night Elfs known as the Druids of the Moon. The once beautiful harmony between nature, beast and being was shattered by the Dark Legion during the invasion. Now all that is left is a dark forest with ruins of the once great citadel of the Night Elf, Darnassus.";
 	std::string area2 = "Darkwood";
@@ -133,6 +135,7 @@ void initialize ()
 	std::shared_ptr <Area> _azsuna (new Area (static_cast<std::string> ("Azsuna"),
 	static_cast <std::string> ("The Eastern shores of Broken Isles, occupated by hostile Nagas resisting the Dark Legion. The Nagas are known for their cunning in witchcraft and embraces the power of Frozen magic. ")));
 
+/*	-----	CREATE CHARACTERS ----*/
 	std::string name = "Merlin";
 	std::string race = "Human";
 	std::string name2 = "Thelryssa";
@@ -144,6 +147,8 @@ void initialize ()
 	std::shared_ptr <Dragon> _dragon2 (new Dragon (dragon_name, race2, 250, 250, 20, 70, 100, _darkwood, 20, 0));
 	std::shared_ptr <FelSpawn> _felspawn (new FelSpawn (static_cast<std::string> ("Imp"), static_cast<std::string> ("Fel Spawn"),
 	250, 5, 50, 100, _azsuna, 10, 0, 10));
+
+	/*	----	ASSIGN CHARACTERS TO AREAS, AND AREAS TO AREAS (NEIGHBOURS) ----*/
 
 	_start->add_neighbor (_darkwood, direction_t::NORTH);
 	_darkwood->add_neighbor (_start, direction_t::SOUTH);
@@ -166,6 +171,18 @@ void initialize ()
 	_areas.push_back (_azsuna);
 
 	std::cout << "Areas assigned!" << std::endl;
+
+	/* ---- CREATE ITEMS ---- */
+	
+	std::shared_ptr <Keepable> _frostfire_blade (new Keepable (static_cast<std::string>(
+	"Frostfire Blade"), 5, 1, 10, 5, 10, 50, 50));
+	std::shared_ptr <Keepable> _tome_of_secrets (new Keepable (static_cast<std::string>(
+	"Tome of Secrets"), 1, 1, 10, 0, 20, 20, 20));
+
+	_player->pick_up (*_frostfire_blade);
+	_player->pick_up (*_tome_of_secrets); 
+		
+	/*	---- ASSIGN ENUMS TO MAPS FOR INPUT PARSING ---- */
 
 	_actions ["go"] = Actions::Go;
 	_actions ["fight"] = Actions::Fight;
