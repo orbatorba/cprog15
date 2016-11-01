@@ -45,7 +45,8 @@ namespace Game
 
 	Character::~Character () 
 	{
-		std::cout << "Character detructed!" << std::endl;
+		//std::cout << "Character detructed!" << std::endl;
+		_area->remove_character (*this);
 		_area.reset();
 	 }
 
@@ -183,21 +184,22 @@ namespace Game
 			_area->add_item (it->second);
 			std::cout << _name << " dropped " << it->second.name() << "!" << std::endl;
 		}
+		_bag.clear ();
 	}
 
-	void Character::go (direction_t dir)
+	bool Character::go (direction_t dir)
 	{
 		if (_area->has_neighbor (dir))
 		{
 			_area->leave (*this);
 			_area = _area->neighbor (dir);
 			_area->enter (*this);
-			std::cout << _area->description () << std::endl;
+			return true;
 		}
 		else
 		{
 			std::cerr << _area->name() << " has no neighbour in that direction." << std::endl;
-			return;
+			return false;
 		}
 	}
 
@@ -205,7 +207,7 @@ namespace Game
 	{
 		if (_bag.add (item))
 		{
-			std::cout << _name << " picked up " << item.name () << "!" << std::endl;	
+			//std::cout << _name << " picked up " << item.name () << "!" << std::endl;	
 			return true;
 		}
 		return false;
@@ -215,6 +217,7 @@ namespace Game
 	{
 		if (_bag.remove (item))
 		{
+			std::cout << std::endl;
 			std::cout << _name << " dropped " << item.name () << "!" << std::endl;
 			return true;
 		}
@@ -223,8 +226,17 @@ namespace Game
 		return false;
 	}
 	
-	void Character::check_bag ()
+	Keepable & Character::get_item (const std::string & item)
 	{
+		return _bag.get_container ().at (item);
+	}
+	
+	void Character::check_bag () const
+	{
+		if (_bag.empty ())
+			return;
+
+		std::cout << _name << " contains the following items: " << std::endl;
 		_bag.list_items ();
 	}	
 }

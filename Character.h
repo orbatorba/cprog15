@@ -113,11 +113,12 @@ namespace Game
 			virtual void drop_all_items ();
 
 //			virtual void action () = 0;
-			virtual void go (direction_t);
+			virtual bool go (direction_t);
 			virtual void fight (Character &) = 0;
 			virtual bool pick_up (Keepable &);
 			virtual bool drop (Keepable &);
-			virtual void check_bag ();
+			virtual Keepable & get_item (const std::string &);
+			virtual void check_bag () const;
 //			virtual void talk_to (Character &) = 0;
 
 

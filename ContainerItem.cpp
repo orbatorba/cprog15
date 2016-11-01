@@ -77,24 +77,35 @@ namespace Game
 		return false;
 	}
 
-	void ContainerItem::list_items ()
+	void ContainerItem::list_items () const
 	{
+		if (_container.empty ())
+			return;
 		std::cout << std::endl;
-		std::cout << _name << " contains the following items: " << std::endl;
+		auto last = _container.end()--;
 		for (auto it = _container.begin (); it != _container.end(); ++it)
 		{
 			size_t len = it->first.size ();
 			for (size_t i = 0; i <= len; ++i)
-				std::cout << "——";
+				std::cout << "—";
 			std::cout << std::endl; 
 			std::cout << "| " << it->first << " |" << std::endl;
-			auto last = _container.end()--;
 			if (it == last)
 			{
 				for (size_t i = 0; i <= len; ++i)
-					std::cout << "——";
+					std::cout << "—";
 				std::cout << std::endl; 
 			}
 		}
+	}
+
+	bool ContainerItem::empty () const
+	{
+		return _container.empty ();
+	}
+	
+	void ContainerItem::clear ()
+	{
+		_container.clear ();
 	}
 }

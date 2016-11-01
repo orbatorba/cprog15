@@ -201,6 +201,7 @@ namespace Game
 			_attack_power += item.attack_power ();
 			hitpoints += item.health_points ();
 			_mana += item.mana_points ();
+			_area->drop_item (item);
 			
 		}
 	}
@@ -214,6 +215,7 @@ namespace Game
 			_attack_power -= item.attack_power ();
 			hitpoints -= item.health_points ();
 			_mana -= item.mana_points ();
+			_area->add_item (item);
 		}
 	}
 

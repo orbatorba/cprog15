@@ -36,8 +36,9 @@ namespace Game
 
 			Player ();
 //			~Player ();
-			Player (const std::string &name, const std::string &race, int hp, int mana, int armor, int damage,
-					int stam, std::shared_ptr <Area> area, int fire_res = 0, int frost_res = 0, int shadow_res = 0);
+			Player (const std::string &name, const std::string &race, int hp, int mana, int armor,
+					int damage, int stam, std::shared_ptr <Area> area, int fire_res = 0,
+					 int frost_res = 0, int shadow_res = 0);
 
 			//void use_item (std::string);
 			int mana () const { return _mana; }
@@ -54,6 +55,8 @@ namespace Game
 			void action ();*/
 			bool pick_up (Keepable &) override;
 			bool drop (Keepable &) override;
+			//Keepable & get_item (std::string &);
+			
 
 			void section_input (std::string, std::string &, std::string &);
 

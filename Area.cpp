@@ -7,7 +7,7 @@ namespace Game
 
 	Area::~Area () 
 	{
-		std::cout << "Area destructed!" << std::endl;
+		//std::cout << "Area destructed!" << std::endl;
 		auto it = _neighbors.begin();
 		while (it != _neighbors.end())
 		{
@@ -36,7 +36,7 @@ namespace Game
 	{
 		try
 		{
-			return & _neighbors.at (direction);
+			return  _neighbors.at (direction);
 		}
 		catch (std::out_of_range e)
 		{
@@ -72,11 +72,23 @@ namespace Game
 
 	void Area::enter (Character & character)
 	{
+		auto entered =
 		_characters.insert (std::pair <std::string, Character &> (character.name (), character));
 
-		if (_characters.at (character.name ()).name() == character.name ())
+		if (entered.second)
+		{
+			//Print info about the area, characters in the area and possible items.
 			std::cout << character.name () << " just entered " << this->_name << "!" << std::endl;
-
+			std::cout << std::endl;
+			std::cout << _description << std::endl;
+			if (! _characters.empty ())
+			{
+				list_characters (character.name ());
+				list_character_items (character.name ());
+			}
+			list_items ();
+			
+		}
 		else
 			std::cout << character.name () << " couldn't enter " << this->_name << ". Seems like "
 			<< "there is a duplicate character here... " << std::endl;
@@ -90,6 +102,16 @@ namespace Game
 
 		else
 			std::cout << character.name () << " leaves " << this->_name << std::endl;
+	}
+
+	void Area::add_character (Character & character)
+	{
+		_characters.insert (std::pair < std::string, Character &> (character.name (), character));
+	}
+	
+	void Area::remove_character (Character & character)
+	{
+		_characters.erase (character.name ());
 	}
 	
 	void Area::clear_neighbors ()
@@ -114,5 +136,44 @@ namespace Game
 	{
 		return _items.at (name);
 	}
+
+	void Area::list_characters (std::string name) const
+	{
+		std::cout << std::endl;
+		std::cout << "The following characters are wandering in " << _name << ": " << std::endl;
+		for (const auto& pair : _characters)
+		{	
+			if (pair.second.name () != name) 
+				std::cout << pair.second.name () << " - " << pair.second.race () << std::endl;
+		}
+	}
+
+	void Area::list_character_items (std::string name) const
+	{
+		std::cout << std::endl;
+		std::cout << "The following items are carried by characters in " << _name << ": "
+		<< std::endl;
+		for (const auto& pair : _characters)
+		{
+			if (pair.second.name () != name)
+				pair.second.check_bag ();
+		}
+	}
+
+	void Area::list_items () const
+	{
+		if (!_items.empty ())
+		{
+			std::cout << std::endl;
+			std::cout << _name << " contains the following loot: " << std::endl;
+			for (const auto& pair : _items)
+			{
+				std::cout << pair.first << std::endl;
+			}
+		}	
+		
+	}
+
+	
 
 }

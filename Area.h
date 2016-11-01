@@ -46,12 +46,18 @@ namespace Game
 
 			virtual void enter (Character &);
 			virtual void leave (Character &);
-			
 			virtual void clear_neighbors ();
+			virtual void add_character (Character &);
+			virtual void remove_character (Character &);
 			
 			virtual void add_item (Keepable &);
 			virtual void drop_item (Keepable &);
 			virtual Keepable & get_item (std::string);
+
+			virtual void list_characters (std::string) const;
+			virtual void list_character_items (std::string) const;
+			virtual void list_items () const;
+			
 
 	};
 }

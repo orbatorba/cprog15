@@ -4,10 +4,13 @@
 #include "FelSpawn.h"
 #include "Area.h"
 #include <iostream>
+#include <sstream>
+#include <cctype>
+#include <algorithm>
 
 using namespace Game;
 
-enum class Actions { Go, Fight, Examine, Take, Drop, Talk, Quit };
+enum class Actions { Go, Fight, Examine, PickUp, Drop, Talk, Quit, Nothing };
 
 enum class Directions
 { NORTH, SOUTH, EAST, WEST, SOUTHEAST, SOUTHWEST, NORTHEAST, NORTHWEST };
@@ -42,16 +45,43 @@ int main (int argc, char* argv[])
 	std::string action;
 	std::string what_action;
 
+	std::string first, second, third, forth;
+
 	bool running = true;
 	while (running)
 	{
+		std::cout << std::endl;
 		std::cout << "Please enter an action to proceed: ";
 		input.clear ();
 		getline (std::cin, input);
+	
+//		std::transform (input.begin(), input.end(), input.begin(), ::tolower);	
 		action.clear ();
 		what_action.clear ();
 
-		_player->section_input (input, action, what_action);
+		first.clear(); second.clear(); third.clear(); forth.clear ();
+
+		std::istringstream iss (input);
+		iss >> first >> second >> third >> forth;
+
+		// Handle cases where the first two input words combine into an Action.
+		if (first == "pick" || first == "talk")
+		{
+			action = first + " " + second;
+			what_action = third;
+			if (forth != "")
+				what_action += " " + forth;
+		}
+		else
+		{
+			action = first;
+			what_action = second;
+			if (third != "")
+				what_action += " " + third;
+
+			if (forth != "")
+				what_action += " " + forth;
+		}
 
 		std::cout << "" << std::endl;
 		try
@@ -59,20 +89,21 @@ int main (int argc, char* argv[])
 			switch (_actions.at(action))
 			{
 				case Actions::Fight:
+						
+					try
+					{
+						_player->fight (_player->area ()->characters ().at (what_action));
+					}
+					catch (std::out_of_range e)
+					{
+						std::cout << "That character is in a different area!" << std::endl;
+						continue;
+					}
 
-						try
-						{
-							_player->fight (_player->area ()->characters ().at (what_action));
-						}
-						catch (std::out_of_range e)
-						{
-							std::cout << "That character is in a different area!" << std::endl;
-							continue;
-						}
-
-						break;
+					break;
 
 				case Actions::Go:
+
 					switch (_directions.at (what_action))
 					{
 						case Directions::NORTH:
@@ -90,11 +121,14 @@ int main (int argc, char* argv[])
 						case Directions::EAST:
 							_player->go (direction_t::EAST);
 							break;
+
+						default:
+							std::cout << "That is not a possible direction... " << std::endl;
 					}
 
 					break;
 
-				case Actions::Take:
+				case Actions::PickUp:
 					
 					try
 					{
@@ -106,9 +140,22 @@ int main (int argc, char* argv[])
 					}
 					break;
 
+				case Actions::Drop:
+					try
+					{
+						_player->drop (_player->get_item (what_action));
+					}
+					catch (std::out_of_range e)
+					{
+						std::cout << "Can't drop that item! " << std::endl;
+					}
+					break;
+
 				case Actions::Quit:
+					if (second != "")
+						break;
+
 					std::cout << "You had a good run! Thank you for playing." << std::endl;
-			//		cleanup_characters ();
 					delete_characters ();
 					cleanup_areas ();
 					cleanup_items ();
@@ -172,23 +219,23 @@ void initialize ()
 	_darkwood->add_neighbor (_start, direction_t::SOUTH);
 	_darkwood->add_neighbor (_azsuna, direction_t::EAST);
 	_azsuna->add_neighbor (_darkwood, direction_t::WEST);
+
+	_start->add_character (*_dragon);
+	_darkwood->add_character (*_dragon2);
+	_azsuna->add_character (*_felspawn);
 	_start->enter (*_player);
-	_start->enter (*_dragon);
-	_darkwood->enter (*_dragon2);
-	_azsuna->enter (*_felspawn);
 
 	_characters.push_back (_player);
 	_characters.push_back (_dragon);
 	_characters.push_back (_dragon2);
 	_characters.push_back (_felspawn);
-
-	std::cout << "Characters assigned!" << std::endl;
+	
 
 	_areas.push_back (_start);
 	_areas.push_back (_darkwood);
 	_areas.push_back (_azsuna);
-
-	std::cout << "Areas assigned!" << std::endl;
+	
+	std::cout << std::endl;
 
 	/* ---- CREATE ITEMS ---- */
 	
@@ -197,7 +244,7 @@ void initialize ()
 	std::shared_ptr <Keepable> _tome_of_secrets (new Keepable (static_cast<std::string>(
 	"Tome of Secrets"), 1, 1, 10, 0, 20, 20, 20));
 
-	std::shared_ptr <Keepable> _dragon_tear (new Keepable (static_cast<std::string>("Tear"),
+	std::shared_ptr <Keepable> _dragon_tear (new Keepable (static_cast<std::string>("Dragon's Tear"),
 	1, 1, 10, 0, 10, 5, 5));
 
 	_player->pick_up (*_frostfire_blade);
@@ -214,10 +261,11 @@ void initialize ()
 	_actions ["go"] = Actions::Go;
 	_actions ["fight"] = Actions::Fight;
 	_actions ["examine"] = Actions::Examine;
-	_actions ["take"] = Actions::Take;
+	_actions ["pick up"] = Actions::PickUp;
 	_actions ["drop"] = Actions::Drop;
-	_actions ["talk"] = Actions::Talk;
+	_actions ["talk to"] = Actions::Talk;
 	_actions ["quit"] = Actions::Quit;
+	_actions [""] = Actions::Nothing;
 
 	_directions ["north"] = Directions::NORTH;
 	_directions ["south"] = Directions::SOUTH;
@@ -238,18 +286,12 @@ void initialize ()
 
 void cleanup_characters ()
 {
-//	std::vector<std::shared_ptr <Character>>::iterator it = _characters.begin ();
 	auto it = _characters.begin ();
 	while (it != _characters.end ())
 	{
 		if ((*it)->state == state_t::DEAD)
 		{
-			//(*it)->area()->leave (*(*it));
-			//(*it)->set_area (nullptr);
-			std::cout << (*it)->name() << std::endl;
 			it = _characters.erase (it);
-			std::cout << (*it)->name() << std::endl;
-			
 		}
 		else
 			++it;
@@ -258,18 +300,9 @@ void cleanup_characters ()
 
 void cleanup_areas ()
 {
-/*	
-	//std::map <std::string, std::shared_ptr <Area>>::iterator it;
-	for (auto it = _areas.begin (); it != _areas.end(); ++it)
-	{
-		_areas.erase (it);
-	}
-*/
 	for (auto it = _areas.begin(); it != _areas.end(); ++it)
 	{
-		std::cout << "Ref. Counts Area: " << (*it).use_count() << std::endl;
 		(*it)->clear_neighbors();
-		//it = _areas.erase (it);
 	}
 	
 	_areas.clear ();
@@ -277,17 +310,13 @@ void cleanup_areas ()
 
 void delete_characters ()
 {
-	//std::vector<std::shared_ptr <Character>>::iterator it = _characters.begin ();
 	auto it = _characters.begin ();
 	while (it != _characters.end ())
 	{
-		//(*it)->area()->leave (*(*it));
-		//(*it)->set_area (nullptr);
 		it = _characters.erase (it);
 	}
-	
-	_characters.clear ();
 
+	_characters.clear ();
 }
 
 void cleanup_items ()
