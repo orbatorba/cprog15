@@ -41,6 +41,8 @@ int main (int argc, char* argv[])
 
 	std::cout << "" << std::endl;
 
+	display_help ();
+
 	initialize ();
 
 	std::string input;
@@ -305,6 +307,27 @@ void initialize ()
 
 void display_help ()
 {
+	std::cout << "You can command your Wizard by the following commands: " << std::endl;
+	std::cout << "-------------------------------------------------------" << std::endl;
+	std::cout << "go 'direction' [north, south, east, west] - to move your character to a different "	 << "Area." << std::endl;
+	std::cout << "fight 'character name' [Eg. 'fight Thelryssa'] - to fight a Character. Characters may contain precious loot which will make you stronger! " << std::endl;
+	std::cout << "pick up 'item name' [Eg. 'pick up Sword Of Truth'] - to pick up an Item." << std::endl;
+	std::cout << "drop 'item name' - to drop an Item." << std::endl;
+	std::cout << "use 'item name' - to use an Item. Remember, only some items are usable!" << std::endl;
+	std::cout << "quit - to quit the game." << std::endl;
+	std::cout << "-------------------------------------------------------" << std::endl;
+	std::cout << std::endl;
+
+	std::cout << "When in combat, you use the following commands: " << std::endl;	
+	std::cout << "-------------------------------------------------------" << std::endl;
+	std::cout << "cast 'spell name' [E.g 'cast frostbolt'] - to cast a spell. Spells cost mana"
+	 << " but deal more damage!" << std::endl;
+	
+	//TODO: List possible spells
+	
+	std::cout << "attack - to attack with your weapon. Attacks spends your stamina!" << std::endl;
+	std::cout << "flee - to flee from the battle. Fleeing will cost stamina!" << std::endl;
+	std::cout << "--------------------------------------------------------" << std::endl;
 	
 }
 
