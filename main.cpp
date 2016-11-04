@@ -36,8 +36,8 @@ static void cleanup_items ();
 
 int main (int argc, char* argv[])
 {
-	std::cout << "You are now playing Quest for Magic! Use the cmd-line to command your wizard"
-				<< " through the lands, and through battle..." << std::endl;
+	std::cout << std::endl;
+	std::cout << "You are now playing Quest for Magic! You are a wizard with deep knowledge in elements of Shadow, Fire and Frost. You have returned to the lands of Azeroth, which once was in harmony. Now these lands has been corrupted by the Burning Legion, led by the powerful Warlock Gul'Dan. It is your task to cleanse the lands of Fel by defeating Gul'Dan. Be cautious though, as you will need both experience in combat and powerful items in order to defeat Gul'Dan..." << std::endl;
 
 	std::cout << "" << std::endl;
 
@@ -215,7 +215,14 @@ void initialize ()
 	std::shared_ptr <Area> _azsuna (new Area (static_cast<std::string> ("Azsuna"),
 	static_cast <std::string> ("The Eastern shores of Broken Isles, occupated by hostile Nagas resisting the Dark Legion. The Nagas are known for their cunning in witchcraft and embraces the power of Frozen magic. ")));
 
-	/* -----	CREATE CHARACTERS ----*/
+	/*--- STORE AREAS --- */
+	_areas.push_back (_start);
+	_areas.push_back (_darkwood);
+	_areas.push_back (_azsuna);
+	
+
+
+	/* -----CREATE CHARACTERS ----*/
 	std::string name = "Merlin";
 	std::string race = "Human";
 	std::string name2 = "Thelryssa";
@@ -227,6 +234,43 @@ void initialize ()
 	std::shared_ptr <Dragon> _dragon2 (new Dragon (dragon_name, race2, 250, 250, 20, 70, 100, _darkwood, 20, 0));
 	std::shared_ptr <FelSpawn> _felspawn (new FelSpawn (static_cast<std::string> ("Imp"),
 			 static_cast<std::string> ("Fel Spawn"), 250, 5, 50, 100, _azsuna, 10, 0, 10));
+
+	/* --- STORE CHARACTERS ---*/
+	_characters.push_back (_player);
+	_characters.push_back (_dragon);
+	_characters.push_back (_dragon2);
+	_characters.push_back (_felspawn);
+	
+
+
+	/* ---- CREATE ITEMS ---- */
+	
+	std::shared_ptr <Keepable> _frostfire_blade (new Keepable (static_cast<std::string>("Frostfire Blade"), 5, 1, 10, 5, 10, 50, 50));
+	std::shared_ptr <Keepable> _tome_of_secrets (new Keepable (static_cast<std::string>("Tome of Secrets"), 1, 1, 10, 0, 20, 20, 20));
+
+	std::shared_ptr <Keepable> _dragon_tear (new Keepable (static_cast<std::string>("Dragon's Tear"), 1, 1, 10, 0, 10, 5, 5));
+
+	std::shared_ptr <Keepable> _health_potion (new Usable (static_cast <std::string> ("Health Potion"), 0, 200, 0));
+	std::shared_ptr <Keepable> _mana_potion (new Usable (static_cast <std::string> ("Mana Potion"), 200, 0, 0));
+
+	/* ---- STORE ITEMS --- */	
+	_items.push_back (_frostfire_blade);
+	_items.push_back (_tome_of_secrets);
+	_items.push_back (_dragon_tear);
+	_items.push_back (_health_potion);
+	_items.push_back (_mana_potion);
+	
+
+	/* --- ASSIGN ITEMS TO CHARACTERS --- */	
+	_player->pick_up (*_frostfire_blade);
+	_player->pick_up (*_tome_of_secrets); 
+
+	_dragon->pick_up (*_dragon_tear);
+	_dragon->pick_up (*_health_potion);
+
+	_dragon2->pick_up (*_mana_potion);
+
+
 
 	/*	----	ASSIGN CHARACTERS TO AREAS, AND AREAS TO AREAS (NEIGHBOURS) ----*/
 
@@ -240,42 +284,9 @@ void initialize ()
 	_azsuna->add_character (*_felspawn);
 	_start->enter (*_player);
 
-	_characters.push_back (_player);
-	_characters.push_back (_dragon);
-	_characters.push_back (_dragon2);
-	_characters.push_back (_felspawn);
-	
-
-	_areas.push_back (_start);
-	_areas.push_back (_darkwood);
-	_areas.push_back (_azsuna);
-	
 	std::cout << std::endl;
 
-	/* ---- CREATE ITEMS ---- */
-	
-	std::shared_ptr <Keepable> _frostfire_blade (new Keepable (static_cast<std::string>("Frostfire Blade"), 5, 1, 10, 5, 10, 50, 50));
-	std::shared_ptr <Keepable> _tome_of_secrets (new Keepable (static_cast<std::string>("Tome of Secrets"), 1, 1, 10, 0, 20, 20, 20));
 
-	std::shared_ptr <Keepable> _dragon_tear (new Keepable (static_cast<std::string>("Dragon's Tear"), 1, 1, 10, 0, 10, 5, 5));
-
-	std::shared_ptr <Keepable> _health_potion (new Usable (static_cast <std::string> ("Health Potion"), 0, 200, 0));
-	std::shared_ptr <Keepable> _mana_potion (new Usable (static_cast <std::string> ("Mana Potion"), 200, 0, 0));
-
-	_player->pick_up (*_frostfire_blade);
-	_player->pick_up (*_tome_of_secrets); 
-
-	_dragon->pick_up (*_dragon_tear);
-	_dragon->pick_up (*_health_potion);
-
-	_dragon2->pick_up (*_mana_potion);
-
-	_items.push_back (_frostfire_blade);
-	_items.push_back (_tome_of_secrets);
-	_items.push_back (_dragon_tear);
-	_items.push_back (_health_potion);
-	_items.push_back (_mana_potion);
-		
 	/*	---- ASSIGN ENUMS TO MAPS FOR INPUT PARSING ---- */
 
 	_actions ["go"] = Actions::Go;
@@ -307,26 +318,31 @@ void initialize ()
 
 void display_help ()
 {
+	std::cout << " You will make use of the cmd-line to command your wizard"
+				<< " through the lands, and through battle!" << std::endl;
+
+	std::cout << std::endl;
+
 	std::cout << "You can command your Wizard by the following commands: " << std::endl;
 	std::cout << "-------------------------------------------------------" << std::endl;
-	std::cout << "go 'direction' [north, south, east, west] - to move your character to a different "	 << "Area." << std::endl;
-	std::cout << "fight 'character name' [Eg. 'fight Thelryssa'] - to fight a Character. Characters may contain precious loot which will make you stronger! " << std::endl;
-	std::cout << "pick up 'item name' [Eg. 'pick up Sword Of Truth'] - to pick up an Item." << std::endl;
-	std::cout << "drop 'item name' - to drop an Item." << std::endl;
-	std::cout << "use 'item name' - to use an Item. Remember, only some items are usable!" << std::endl;
-	std::cout << "quit - to quit the game." << std::endl;
+	std::cout << "$ go 'direction' [north, south, east, west] - to move your character to a different "	 << "Area." << std::endl;
+	std::cout << "$ fight 'character name' [Eg. 'fight Thelryssa'] - to fight a Character." << std::endl;
+	std::cout << "$ pick up 'item name' [Eg. 'pick up Sword Of Truth'] - to pick up an Item." << std::endl;
+	std::cout << "$ drop 'item name' - to drop an Item." << std::endl;
+	std::cout << "$ use 'item name' - to use an Item. Remember, only some items are usable!" << std::endl;
+	std::cout << "$ quit - to quit the game." << std::endl;
 	std::cout << "-------------------------------------------------------" << std::endl;
 	std::cout << std::endl;
 
 	std::cout << "When in combat, you use the following commands: " << std::endl;	
 	std::cout << "-------------------------------------------------------" << std::endl;
-	std::cout << "cast 'spell name' [E.g 'cast frostbolt'] - to cast a spell. Spells cost mana"
+	std::cout << "$ cast 'spell name' [E.g 'cast frostbolt'] - to cast a spell. Spells cost mana"
 	 << " but deal more damage!" << std::endl;
 	
 	//TODO: List possible spells
 	
-	std::cout << "attack - to attack with your weapon. Attacks spends your stamina!" << std::endl;
-	std::cout << "flee - to flee from the battle. Fleeing will cost stamina!" << std::endl;
+	std::cout << "$ attack - to attack with your weapon. Attacks spends your stamina!" << std::endl;
+	std::cout << "$ flee - to flee from the battle. Fleeing will cost stamina!" << std::endl;
 	std::cout << "--------------------------------------------------------" << std::endl;
 	
 }
