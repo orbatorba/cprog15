@@ -3,6 +3,7 @@
 #include "Dragon.h"
 #include "FelSpawn.h"
 #include "Area.h"
+#include "Usable.h"
 #include <iostream>
 #include <sstream>
 #include <cctype>
@@ -10,7 +11,7 @@
 
 using namespace Game;
 
-enum class Actions { Go, Fight, Examine, PickUp, Drop, Talk, Quit, Nothing };
+enum class Actions { Go, Fight, Examine, PickUp, Drop, Talk, Quit, Use, Nothing };
 
 enum class Directions
 { NORTH, SOUTH, EAST, WEST, SOUTHEAST, SOUTHWEST, NORTHEAST, NORTHWEST };
@@ -27,6 +28,7 @@ static std::vector<std::shared_ptr<Character>> _characters;
 static std::vector <std::shared_ptr <Item>> _items;
 
 static void initialize ();
+static void display_help ();
 static void cleanup_characters ();
 static void cleanup_areas ();
 static void delete_characters ();
@@ -151,8 +153,19 @@ int main (int argc, char* argv[])
 					}
 					break;
 
+				case Actions::Use:
+
+					try
+					{
+						_player->use (_player->get_item (what_action));
+					}
+					catch (std::out_of_range e)
+					{
+						std::cout << "Can't use that item! " << std::endl;
+					}
+
 				case Actions::Quit:
-					if (second != "")
+					if (what_action != "")
 						break;
 
 					std::cout << "You had a good run! Thank you for playing." << std::endl;
@@ -210,8 +223,8 @@ void initialize ()
 	_player = std::shared_ptr <Player> (new Player (name, race, 500, 1000, 5, 50, 100, _start, 10, 10));
 	std::shared_ptr <Dragon> _dragon  (new Dragon (name2, race2, 250, 150, 10, 50, 100, _start, 10, 0));
 	std::shared_ptr <Dragon> _dragon2 (new Dragon (dragon_name, race2, 250, 250, 20, 70, 100, _darkwood, 20, 0));
-	std::shared_ptr <FelSpawn> _felspawn (new FelSpawn (static_cast<std::string> ("Imp"), static_cast<std::string> ("Fel Spawn"),
-	250, 5, 50, 100, _azsuna, 10, 0, 10));
+	std::shared_ptr <FelSpawn> _felspawn (new FelSpawn (static_cast<std::string> ("Imp"),
+			 static_cast<std::string> ("Fel Spawn"), 250, 5, 50, 100, _azsuna, 10, 0, 10));
 
 	/*	----	ASSIGN CHARACTERS TO AREAS, AND AREAS TO AREAS (NEIGHBOURS) ----*/
 
@@ -239,22 +252,27 @@ void initialize ()
 
 	/* ---- CREATE ITEMS ---- */
 	
-	std::shared_ptr <Keepable> _frostfire_blade (new Keepable (static_cast<std::string>(
-	"Frostfire Blade"), 5, 1, 10, 5, 10, 50, 50));
-	std::shared_ptr <Keepable> _tome_of_secrets (new Keepable (static_cast<std::string>(
-	"Tome of Secrets"), 1, 1, 10, 0, 20, 20, 20));
+	std::shared_ptr <Keepable> _frostfire_blade (new Keepable (static_cast<std::string>("Frostfire Blade"), 5, 1, 10, 5, 10, 50, 50));
+	std::shared_ptr <Keepable> _tome_of_secrets (new Keepable (static_cast<std::string>("Tome of Secrets"), 1, 1, 10, 0, 20, 20, 20));
 
-	std::shared_ptr <Keepable> _dragon_tear (new Keepable (static_cast<std::string>("Dragon's Tear"),
-	1, 1, 10, 0, 10, 5, 5));
+	std::shared_ptr <Keepable> _dragon_tear (new Keepable (static_cast<std::string>("Dragon's Tear"), 1, 1, 10, 0, 10, 5, 5));
+
+	std::shared_ptr <Keepable> _health_potion (new Usable (static_cast <std::string> ("Health Potion"), 0, 200, 0));
+	std::shared_ptr <Keepable> _mana_potion (new Usable (static_cast <std::string> ("Mana Potion"), 200, 0, 0));
 
 	_player->pick_up (*_frostfire_blade);
 	_player->pick_up (*_tome_of_secrets); 
 
 	_dragon->pick_up (*_dragon_tear);
+	_dragon->pick_up (*_health_potion);
+
+	_dragon2->pick_up (*_mana_potion);
 
 	_items.push_back (_frostfire_blade);
 	_items.push_back (_tome_of_secrets);
 	_items.push_back (_dragon_tear);
+	_items.push_back (_health_potion);
+	_items.push_back (_mana_potion);
 		
 	/*	---- ASSIGN ENUMS TO MAPS FOR INPUT PARSING ---- */
 
@@ -265,16 +283,17 @@ void initialize ()
 	_actions ["drop"] = Actions::Drop;
 	_actions ["talk to"] = Actions::Talk;
 	_actions ["quit"] = Actions::Quit;
+	_actions ["use"] = Actions::Use;
 	_actions [""] = Actions::Nothing;
 
 	_directions ["north"] = Directions::NORTH;
 	_directions ["south"] = Directions::SOUTH;
 	_directions ["east"] = Directions::EAST;
 	_directions ["west"] = Directions::WEST;
-	_directions ["southeast"] = Directions::SOUTHEAST;
-	_directions ["southwest"] = Directions::SOUTHWEST;
-	_directions ["northeast"] = Directions::NORTHEAST;
-	_directions ["northwest"] = Directions::NORTHWEST;
+//	_directions ["southeast"] = Directions::SOUTHEAST;
+//	_directions ["southwest"] = Directions::SOUTHWEST;
+//	_directions ["northeast"] = Directions::NORTHEAST;
+//	_directions ["northwest"] = Directions::NORTHWEST;
 
 	_types ["dragon"] = Types::Dragon;
 	_types ["troll"] = Types::Troll;
@@ -282,6 +301,11 @@ void initialize ()
 	_types ["item"] = Types::Item;
 	_types ["area"] = Types::Area;
 
+}
+
+void display_help ()
+{
+	
 }
 
 void cleanup_characters ()

@@ -7,6 +7,7 @@ namespace Game
 
 	class Area;
 	class Keepable;
+	class Usable;
 	//class ContainerItem;
 	class Player : public Character
 	{
@@ -56,6 +57,7 @@ namespace Game
 			bool pick_up (Keepable &) override;
 			bool drop (Keepable &) override;
 			//Keepable & get_item (std::string &);
+			void use (Keepable &);
 			
 
 			void section_input (std::string, std::string &, std::string &);

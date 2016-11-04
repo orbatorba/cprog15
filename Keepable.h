@@ -11,6 +11,7 @@ namespace Game
 			unsigned int _spell_power;
 			unsigned int _health_points;
 			unsigned int _mana_points;
+			bool _usable = false;
 	
 		public:
 			Keepable ();
@@ -22,6 +23,13 @@ namespace Game
 			virtual unsigned int spell_power () const { return _spell_power; }
 			virtual unsigned int health_points () const { return _health_points; }
 			virtual unsigned int mana_points () const { return _mana_points; }
+
+			virtual unsigned int mana_gain () const { return 0; }
+			virtual unsigned int health_gain () const { return 0; }
+			virtual unsigned int all_resistance () const { return 0; }
+
+			virtual bool usable () const { return _usable; }
+
  
 	};
 }

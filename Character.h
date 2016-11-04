@@ -120,6 +120,7 @@ namespace Game
 			virtual Keepable & get_item (const std::string &);
 			virtual void check_bag () const;
 //			virtual void talk_to (Character &) = 0;
+			virtual void use () { }
 
 
 

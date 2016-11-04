@@ -1,6 +1,6 @@
 #include "Player.h"
 #include "Area.h"
-#include "Keepable.h"
+#include "Usable.h"
 #include <iostream>
 #include <vector>
 #include <string>
@@ -200,10 +200,12 @@ namespace Game
 			_spell_power += item.spell_power ();
 			_attack_power += item.attack_power ();
 			hitpoints += item.health_points ();
+			change_health (item.health_points ());
 			_mana += item.mana_points ();
 			_area->drop_item (item);
-			
+			return true;
 		}
+		return false;
 	}
 
 	bool Player::drop (Keepable & item)
@@ -214,8 +216,43 @@ namespace Game
 			_spell_power -= item.spell_power ();
 			_attack_power -= item.attack_power ();
 			hitpoints -= item.health_points ();
+			change_health (-item.health_points ());
 			_mana -= item.mana_points ();
 			_area->add_item (item);
+			return true;
+		}
+		return false;
+	}
+
+	void Player::use (Keepable & item) 
+	{
+		if (item.usable ())
+		{
+			if (item.mana_gain () > 0)
+			{
+				std::cout << "You gain " << item.mana_gain() << " mana! " << std::endl;
+				_mana += item.mana_gain ();
+			}
+
+			if (item.health_gain () > 0)
+			{
+				std::cout << "You gain " << item.health_gain () << " health! " << std::endl;
+				change_health (item.health_gain ());
+			}
+			
+			if (item.all_resistance () > 0)
+			{
+				std::cout << "You gain " << item.all_resistance () << " all resistance! "
+				 << std::endl;
+				_fire_resistance += item.all_resistance ();
+				_shadow_resistance += item.all_resistance ();
+				_frost_resistance += item.all_resistance ();
+			}
+
+		}
+		else
+		{
+			std::cout << "You can't use that item! " << std::endl;
 		}
 	}
 
