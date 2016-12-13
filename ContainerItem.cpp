@@ -13,8 +13,7 @@ namespace Game
 		_hold_volume = 15;
 	}
 	
-	ContainerItem::ContainerItem (std::string & name, unsigned int weight, unsigned int volume, 
-						unsigned int price, unsigned int hold_weight, unsigned int hold_volume)
+	ContainerItem::ContainerItem (const std::string & name, unsigned int weight, unsigned int volume, unsigned int price, unsigned int hold_weight, unsigned int hold_volume)
 		: Item (name, weight, volume, price)
 		, _hold_weight (hold_weight)
 		, _hold_volume (hold_volume)

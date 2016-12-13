@@ -45,7 +45,6 @@ namespace Game
 
 	Character::~Character () 
 	{
-		//std::cout << "Character detructed!" << std::endl;
 		_area->remove_character (*this);
 		_area.reset();
 	 }
@@ -191,10 +190,29 @@ namespace Game
 	{
 		if (_area->has_neighbor (dir))
 		{
-			_area->leave (*this);
-			_area = _area->neighbor (dir);
-			_area->enter (*this);
-			return true;
+			if (!_area->neighbor (dir)->isLocked ())
+			{
+				_area->leave (*this);
+				_area = _area->neighbor (dir);
+				_area->enter (*this);
+				return true;
+			}
+			else
+			{
+				if (hasKey())
+				{
+					_area->leave (*this);
+					_area = _area->neighbor (dir);
+					_area->enter (*this);
+					return true;
+				}
+				else
+				{
+					std::cerr << _area->neighbor (dir)->name() << " is locked! You will need a key to enter this"
+					<<  " area."<< std::endl;
+					return false;
+				}
+			}
 		}
 		else
 		{

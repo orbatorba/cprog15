@@ -17,9 +17,10 @@ namespace Game
 			Usable ();
 			Usable (const std::string &, unsigned int, unsigned int, unsigned int);	
 			//virtual void use ();
-			virtual unsigned int mana_gain () const override { return _mana_gain; }
-			virtual unsigned int health_gain () const override { return _health_gain; }
-			virtual unsigned int all_resistance () const override { return _all_resistance; }
+			unsigned int mana_gain () const override { return _mana_gain; }
+			unsigned int health_gain () const override { return _health_gain; }
+			unsigned int all_resistance () const override { return _all_resistance; }
+			void display_stats () const override;
 
 
 					 

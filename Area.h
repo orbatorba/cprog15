@@ -11,6 +11,7 @@ namespace Game
 	enum class direction_t;
 	class Character;
 	class Keepable;
+	class ContainerItem;
 	class Area
 	{
 
@@ -18,10 +19,12 @@ namespace Game
 
 			std::string _name;
 			std::string _description;
+			bool need_key = false;
 
 			std::map <direction_t, std::shared_ptr <Area>> _neighbors;
 			std::map <std::string, Keepable &> _items;
 			std::map <std::string, Character &> _characters;
+			std::map <std::string, ContainerItem &> _chests;
 
 		public:
 
@@ -32,33 +35,37 @@ namespace Game
 
 			std::string description () const { return _description; }
 			std::string name () const { return _name; }
+			bool isLocked () const { return need_key; }
+			void setLocked (bool key) { need_key = key; }
 
-			virtual std::map <direction_t, std::shared_ptr <Area>> neighbors () const 
+			std::map <direction_t, std::shared_ptr <Area>> neighbors () const 
 			{
 				 return _neighbors;
 			 }
-			virtual void add_neighbor (std::shared_ptr <Area>, direction_t);
-			virtual std::shared_ptr <Area> neighbor (direction_t) const;
-//			virtual std::shared_ptr <Area> neighbor (direction_t) const;
-			virtual bool has_neighbor (direction_t) const;
+			void add_neighbor (std::shared_ptr <Area>, direction_t);
+			std::shared_ptr <Area> neighbor (direction_t) const;
+//			 std::shared_ptr <Area> neighbor (direction_t) const;
+			bool has_neighbor (direction_t) const;
 
-			virtual std::map <std::string, Character &> characters () const { return _characters; }
+			std::map <std::string, Character &> characters () const { return _characters; }
 
-			virtual void enter (Character &);
-			virtual void leave (Character &);
-			virtual void clear_neighbors ();
-			virtual void add_character (Character &);
-			virtual void remove_character (Character &);
+			void enter (Character &);
+			void leave (Character &);
+			void clear_neighbors ();
+			void add_character (Character &);
+			void remove_character (Character &);
 			
-			virtual void add_item (Keepable &);
-			virtual void drop_item (Keepable &);
-			virtual Keepable & get_item (std::string);
+			void add_item (Keepable &);
+			void drop_item (Keepable &);
+			Keepable & get_item (std::string);
+			void add_chest (ContainerItem &);
+			void open_chest (std::string &);
+			void add_to_chest (std::string &, Keepable &);
 
-			virtual void list_characters (std::string) const;
-			virtual void list_character_items (std::string) const;
-			virtual void list_items () const;
+			void list_characters (std::string) const;
+			void list_character_items (std::string) const;
+			void list_items () const;
 			
-
 	};
 }
 #endif

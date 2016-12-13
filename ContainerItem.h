@@ -19,7 +19,7 @@ namespace Game
 			
 		public:
 			ContainerItem ();
-			ContainerItem (std::string & name, unsigned int weight, unsigned int volume,
+			ContainerItem (const std::string & name, unsigned int weight, unsigned int volume,
 				unsigned int price, unsigned int hold_weight = 100, unsigned int hold_volume = 15);
 			~ContainerItem ();
 			virtual bool add (Keepable &);

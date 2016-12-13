@@ -55,6 +55,7 @@ namespace Game
 
 			state_t state = state_t::IDLE;
 			bool has_mana = false;
+			bool has_key = false;
 
 			/** --- CONSTRUCTORS --- **/
 
@@ -76,7 +77,6 @@ namespace Game
 			int fire_resistance () const { return _fire_resistance; }
 			int frost_resistance () const { return _frost_resistance; }
 			int shadow_resistance () const { return _shadow_resistance; }
-
 
 			int damage () const { return _damage; }
 			int stamina () const { return _stamina; }
@@ -121,6 +121,7 @@ namespace Game
 			virtual void check_bag () const;
 //			virtual void talk_to (Character &) = 0;
 			virtual void use () { }
+			virtual bool hasKey () const { return has_key; }
 
 
 

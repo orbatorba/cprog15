@@ -12,5 +12,14 @@ namespace Game
 		{ 
 			_usable = true;
 		}
+		
+	void Usable::display_stats () const
+	{
+		std::cout << "------------------------" << std::endl;
+        std::cout << "All Resistance Gain: " << _all_resistance << std::endl;
+        std::cout << "Health Gain: " << _health_gain << std::endl;
+        std::cout << "Mana Gain: " << _mana_gain << std::endl;
+        std::cout << "------------------------" << std::endl;
+	}
 
 }

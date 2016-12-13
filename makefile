@@ -4,8 +4,8 @@ CC    = g++
 FLAGS = -std=c++11 -g -Wall -pedantic
 
 
-game.out: Character.h Player.h Dragon.h Area.h FelSpawn.h Item.h ContainerItem.h Keepable.h Usable.h
-	$(CC) $(FLAGS) -o game.out main.cpp Character.cpp Player.cpp Dragon.cpp Area.cpp FelSpawn.cpp Item.cpp ContainerItem.cpp Keepable.cpp Usable.cpp
+game.out: Character.h Player.h Dragon.h Area.h FelSpawn.h Item.h ContainerItem.h Keepable.h Usable.h GulDan.h
+	$(CC) $(FLAGS) -o game.out main.cpp Character.cpp Player.cpp Dragon.cpp Area.cpp FelSpawn.cpp Item.cpp ContainerItem.cpp Keepable.cpp Usable.cpp GulDan.cpp
 
 
 

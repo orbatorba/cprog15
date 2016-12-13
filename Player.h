@@ -15,8 +15,8 @@ namespace Game
 		protected:
 
 			//Enums to use in switch - case for user input while fighting
-			enum Spell_t { frost_bolt, fire_ball };
-			enum Verbs_t { cast_t, attack_t, flee_t};
+			enum class Spell_t { Frostbolt, Fireball, Meteor, Freeze};
+			enum class Verbs_t { cast_t, attack_t, flee_t};
 
 
 			//Maps to match user input with enums
@@ -58,7 +58,6 @@ namespace Game
 			bool drop (Keepable &) override;
 			//Keepable & get_item (std::string &);
 			void use (Keepable &);
-			
 
 			void section_input (std::string, std::string &, std::string &);
 

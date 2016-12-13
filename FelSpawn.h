@@ -26,10 +26,10 @@ namespace Game
 
       int cost_of_attack = 10;
       std::vector <FelAttack> fel_attacks;
-      std::default_random_engine generator;
-      std::uniform_int_distribution<int> distribution;
+      //std::default_random_engine generator;
+      //std::uniform_int_distribution<int> distribution;
 
-      void initialize ();
+      virtual void initialize ();
 
     public:
 

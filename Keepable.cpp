@@ -21,6 +21,16 @@ namespace Game
 		_health_points (health_points),
 		_mana_points (mana_points)
 	{ }
+
+	void Keepable::display_stats () const 
+	{
+		std::cout << "------------------------" << std::endl;
+		std::cout << "Attack Power: " << _attack_power << std::endl;
+		std::cout << "Spell Power: " << _spell_power << std::endl;
+		std::cout << "Health Points: " << _health_points << std::endl;
+		std::cout << "Mana Points: " << _mana_points << std::endl;
+		std::cout << "------------------------" << std::endl;
+	}
 	
 
 }

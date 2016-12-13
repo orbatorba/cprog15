@@ -10,13 +10,11 @@ namespace Game
 
   FelSpawn::FelSpawn () {}
 
-  FelSpawn::FelSpawn (const std::string & name, const std::string & race, int hp, int armor, int damage,
-                      int stam, std::shared_ptr <Area> area, int fire_res, int frost_res, int shadow_res)
+  FelSpawn::FelSpawn (const std::string & name, const std::string & race, int hp, int armor, 
+	int damage, int stam, std::shared_ptr <Area> area, int fire_res, int frost_res, int shadow_res)
   : Character (name, race, hp, armor, damage, stam, area, fire_res, frost_res, shadow_res)
   {
-    initialize ();
-    distribution = std::uniform_int_distribution<int>(0,3);
-
+    this->initialize ();
   }
 
   void FelSpawn::initialize ()
@@ -25,16 +23,18 @@ namespace Game
     FelAttack Burn;
     FelAttack ManaBurn;
 
-    FelSlice.damage = 50;
+    FelSlice.damage = _damage;
     FelSlice.reduce_attack = 5;
     FelSlice.name = "Fel Slice";
+	FelSlice.element = element_t::PHYSICAL;
 
-    Burn.damage = 100;
+    Burn.damage = 2*_damage;
     Burn.armor_reduce = 5;
     Burn.name = "Burn";
+	Burn.element = element_t::FIRE;
 
-    ManaBurn.damage = 20;
-    ManaBurn.mana_reduce = 40;
+    ManaBurn.damage = _damage*0.5;
+    ManaBurn.mana_reduce = _damage*2;
     ManaBurn.name = "Mana Burn";
     ManaBurn.element = element_t::SHADOW;
 
@@ -52,29 +52,43 @@ namespace Game
     if (this->state != state_t::FIGHTING)
       this->state = state_t::FIGHTING;
 
-    auto dice = std::bind (distribution, generator);
+    //auto dice = std::bind (distribution, generator);
+	std::string element;
     srand (time (NULL));
     int roll = rand () % 4;
-    std::cout << "Fel Spawn rolls: " << roll << std::endl;
+	std::cout << "Roll this turn = " << roll << std::endl;
+
+	if (roll < 3)
+	{
+		if (fel_attacks.at (roll).element == element_t::FIRE)
+			element = "Fire";
+		else if (fel_attacks.at (roll).element == element_t::FROST)
+			element = "Frost";
+		else if (fel_attacks.at (roll).element == element_t::SHADOW)
+			element = "Shadow";
+		else
+			element = "Physical";
+	}
+	
     try
     {
       switch (roll)
       {
         case 0:
-          std::cout << _name << " " << fel_attacks.at (roll).name << "s " << character.name ()
-          << " for " << fel_attacks.at (roll).damage << " Fire damage!" << std::endl;
+          std::cout << _name << " cast " << fel_attacks.at (roll).name << " on " << character.name ()
+          << " for " << fel_attacks.at (roll).damage << " " << element << " damage!" << std::endl;
           character.spell_dmg_taken (fel_attacks.at (roll).damage, fel_attacks.at (roll).element);
           break;
 
         case 1:
-          std::cout << _name << " " << fel_attacks.at (roll).name << "s " << character.name ()
-          << " for " << fel_attacks.at (roll).damage << " Fire damage!" << std::endl;
+          std::cout << _name << " cast " << fel_attacks.at (roll).name << " on " << character.name ()
+          << " for " << fel_attacks.at (roll).damage << " " << element << " damage!" << std::endl;
           character.spell_dmg_taken (fel_attacks.at (roll).damage, fel_attacks.at (roll).element);
           break;
 
         case 2:
-          std::cout << _name << " " << fel_attacks.at (roll).name << "s " << character.name ()
-          << " for " << fel_attacks.at (roll).damage << " Shadow damage";
+          std::cout << _name << " cast " << fel_attacks.at (roll).name << " on " << character.name ()
+          << " for " << fel_attacks.at (roll).damage << " " << element << " damage";
 
           if (character.has_mana)
           {
@@ -91,7 +105,8 @@ namespace Game
         case 3:
           if (_stamina > cost_of_attack)
           {
-            std::cout << _name << " attacks " << character.name () << " with it's claws!" << std::endl;
+            std::cout << _name << " melee attacks " << character.name () << " with their weapon!"
+			<< std::endl;
             character.damage_taken (_damage);
             _stamina -= cost_of_attack;
           }

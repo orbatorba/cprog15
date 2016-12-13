@@ -7,7 +7,6 @@ namespace Game
 
 	Area::~Area () 
 	{
-		//std::cout << "Area destructed!" << std::endl;
 		auto it = _neighbors.begin();
 		while (it != _neighbors.end())
 		{
@@ -31,18 +30,6 @@ namespace Game
 	{
 		_neighbors.insert (std::pair <direction_t, std::shared_ptr <Area>> (direction, neighbor));
 	}
-
-/*	std::shared_ptr <Area> Area::neighbor (direction_t direciton) const
-	{
-		try
-		{
-			return  _neighbors.at (direction);
-		}
-		catch (std::out_of_range e)
-		{
-			std::cout << "There is no neighboring area in that direction" << std::endl;
-		}
-	}*/
 
 	std::shared_ptr <Area> Area::neighbor (direction_t direction) const
 	{
@@ -136,6 +123,52 @@ namespace Game
 	{
 		return _items.at (name);
 	}
+	
+	void Area::add_chest (ContainerItem & item)
+	{
+		auto inserted = _chests.insert(std::pair <std::string, ContainerItem &> (item.name(), item));
+		if (!inserted.second)
+			std::cerr << "Could not add chest to " << _name << "with that name, " << item.name() 
+			<< std::endl;
+	}	
+	
+	void Area::open_chest (std::string & chest_name) 
+	{
+		try
+		{
+			auto container = _chests.at (chest_name).get_container ();
+			if (container.empty())
+			{
+				std::cout << chest_name << " is empty!" << std::endl; 
+				return;
+			}
+
+			auto it = container.begin ();
+			while (it != container.end())
+			{	
+				std::cout << chest_name << " drops " << it->first << " on the ground!" << std::endl;
+				this->add_item (it->second);
+				it = container.erase (it);
+			}
+			
+		}
+		catch (std::out_of_range e)
+		{
+			std::cout << "There is no such chest in " << _name << "!" << std::endl;
+		}
+	}
+
+	void Area::add_to_chest (std::string & name, Keepable & item)
+	{
+		try
+		{
+			_chests.at (name).add (item);
+		}
+		catch (std::out_of_range)
+		{
+			std::cerr << name << "does not exists in this Area!" << std::endl;
+		}
+	}
 
 	void Area::list_characters (std::string name) const
 	{
@@ -167,6 +200,16 @@ namespace Game
 			std::cout << std::endl;
 			std::cout << _name << " contains the following loot: " << std::endl;
 			for (const auto& pair : _items)
+			{
+				std::cout << pair.first << std::endl;
+			}
+		}
+
+		if (!_chests.empty ())
+		{
+			std::cout << std::endl;
+			std::cout << _name << " contains the following chests: " << std::endl;
+			for (const auto& pair: _chests)
 			{
 				std::cout << pair.first << std::endl;
 			}

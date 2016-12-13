@@ -26,27 +26,40 @@ namespace Game
 	{
 		Spell Fireball;
 		Spell Frostbolt;
+		Spell Meteor;
+		Spell Freeze;
 
-		Frostbolt.mana_cost = 10; Frostbolt.damage = 100;
+		Frostbolt.mana_cost = 15; Frostbolt.damage = 100;
 		Frostbolt.element = element_t::FROST;
 
 		Fireball.mana_cost = 15; Fireball.damage = 120;
 		Fireball.element = element_t::FIRE;
 
+		Meteor.mana_cost = 150; Meteor.damage = 250;
+		Meteor.element = element_t::FIRE;
+		
+		Freeze.mana_cost = 100; Freeze.damage = 75;
+		Freeze.reduce_attack = 50;
+		Freeze.element = element_t::FROST;
+
 		_spells["Frostbolt"] = Frostbolt;
 		_spells["Fireball"] = Fireball;
+		_spells["Meteor"] = Meteor;
+		_spells["Freeze"] = Freeze;
 
 	}
 
 	void Player::initialize ()
 	{
 		//Populate the maps
-		spell_match ["frostbolt"] = frost_bolt;
-		spell_match ["fireball"] = fire_ball;
+		spell_match ["frostbolt"] = Spell_t::Frostbolt;
+		spell_match ["fireball"] = Spell_t::Fireball;
+		spell_match ["meteor"] = Spell_t::Meteor;
+		spell_match ["freeze"] = Spell_t::Freeze;
 
-		verb_match ["cast"] = cast_t;
-		verb_match ["attack"] = attack_t;
-		verb_match ["flee"] = flee_t;
+		verb_match ["cast"] = Verbs_t::cast_t;
+		verb_match ["attack"] = Verbs_t::attack_t;
+		verb_match ["flee"] = Verbs_t::flee_t;
 
 		create_spells ();
 
@@ -80,6 +93,7 @@ namespace Game
 			getline (std::cin, input);
 			action.clear ();
 			spell.clear ();
+			Spell current_spell;
 
 			section_input (input, action, spell);
 
@@ -87,10 +101,11 @@ namespace Game
 			{
 				switch (verb_match.at (action))
 				{
-					case cast_t:
+					case Verbs_t::cast_t:
+					
 						switch (spell_match.at (spell))
 						{
-							case frost_bolt:
+							case Spell_t::Frostbolt:
 								if ( _mana < _spells["Frostbolt"].mana_cost)
 								{
 									std::cout << "Not enough mana!" << std::endl;
@@ -102,7 +117,7 @@ namespace Game
 								this->_mana -= _spells["Frostbolt"].mana_cost;
 								break;
 
-							case fire_ball:
+							case Spell_t::Fireball:
 								if ( _mana < _spells["Fireball"].mana_cost)
 								{
 									std::cout << "Not enough mana!" << std::endl;
@@ -114,6 +129,41 @@ namespace Game
 								this->_mana -= _spells["Fireball"].mana_cost;
 								break;
 
+							case Spell_t::Meteor:
+								current_spell = _spells["Meteor"];
+
+								if (_mana < current_spell.mana_cost)
+								{
+									std::cout << "Not enough mana! " << std::endl;
+									continue;
+								}
+								std::cout << "Your body enflames as you call down a giant"
+								<< " Meteor from the sky on " << other.name() << "!"
+								<< std::endl;	
+								other.spell_dmg_taken (current_spell.damage + _spell_power,
+														element_t::FIRE);
+								this->_mana -= current_spell.mana_cost;
+								break;
+
+							case Spell_t::Freeze:
+								current_spell = _spells["Freeze"];
+								if (_mana < current_spell.mana_cost)
+								{
+									std::cout << "Not enough mana!" << std::endl;
+									continue;
+								}
+								
+								std::cout << "You freeze " << other.name() 
+								<< " and reduce his base damage by " << current_spell.reduce_attack
+								<< std::endl;
+								other.spell_dmg_taken (current_spell.damage + _spell_power,
+														element_t::FROST);
+								
+								other.set_damage (other.damage() - current_spell.reduce_attack);	
+								this->_mana -= current_spell.mana_cost;
+								break;
+
+
 							default:
 								std::cout << "I do not recognize that spell!" << std::endl;
 								break;
@@ -122,7 +172,7 @@ namespace Game
 
 					break;
 
-					case attack_t:
+					case Verbs_t::attack_t:
 						if (this->_stamina < 10)
 						{
 							std::cout << "You don't have enough stamina to attack " << other.name ()
@@ -137,7 +187,7 @@ namespace Game
 						std::cout << "Nice swing! You hit " << other.name () << "!" << std::endl;
 						break;
 
-					case flee_t:
+					case Verbs_t::flee_t:
 						if (this->_stamina < 20)
 						{
 							std::cout << "You don't have enough stamina to flee! Consider using"
@@ -196,7 +246,11 @@ namespace Game
 	{
 		if (_bag.add (item))
 		{
+			if (item.name() == "Fel Key")
+				has_key = true;
+
 			std::cout << "You picked up " << item.name () << "!" << std::endl;
+			item.display_stats();
 			_spell_power += item.spell_power ();
 			_attack_power += item.attack_power ();
 			hitpoints += item.health_points ();
@@ -212,6 +266,9 @@ namespace Game
 	{
 		if (_bag.remove (item))
 		{
+			if (item.name () == "Fel Key")
+				has_key = false;
+
 			std::cout << "You dropped " << item.name () << "!" << std::endl;
 			_spell_power -= item.spell_power ();
 			_attack_power -= item.attack_power ();
@@ -248,16 +305,15 @@ namespace Game
 				_shadow_resistance += item.all_resistance ();
 				_frost_resistance += item.all_resistance ();
 			}
-
+			
+			_bag.remove (item);
 		}
 		else
 		{
 			std::cout << "You can't use that item! " << std::endl;
 		}
 	}
-
-
-
+			
 	// Function inspired from:
 	// http://cplussplussatplay.blogspot.se/2012/11/text-adventure-games-c-part-1.html
 	void Player::section_input (std::string Cmd, std::string &wd1, std::string &wd2)

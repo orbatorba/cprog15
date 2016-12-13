@@ -29,6 +29,7 @@ namespace Game
 			virtual unsigned int all_resistance () const { return 0; }
 
 			virtual bool usable () const { return _usable; }
+			virtual void display_stats () const;
 
  
 	};
