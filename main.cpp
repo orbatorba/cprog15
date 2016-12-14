@@ -12,7 +12,7 @@
 
 using namespace Game;
 
-enum class Actions { Go, Fight, CheckBag, PickUp, Drop, Open, Quit, Use, Nothing };
+enum class Actions { Go, Fight, CheckBag, PickUp, Drop, Open, Quit, Use, Nothing, SpellBook };
 
 enum class Directions
 { NORTH, SOUTH, EAST, WEST, SOUTHEAST, SOUTHWEST, NORTHEAST, NORTHWEST };
@@ -23,6 +23,7 @@ enum class Types { Dragon, Troll, Item, Civilian, Area };
 static std::map <std::string, Actions> _actions;
 static std::map <std::string, Directions> _directions;
 static std::map <std::string, Types> _types;
+//Initialize default player to perform some output (list spells etc.)
 std::shared_ptr <Player> _player;
 std::shared_ptr <GulDan> _gul_dan;
 
@@ -44,8 +45,9 @@ int main (int argc, char* argv[])
 
 	std::cout << "" << std::endl;
 
-	display_help ();
-	initialize ();
+	display_help ();	
+	initialize ();	
+	_player->list_spells ();
 
 	std::string input;
 	std::string action;
@@ -135,7 +137,11 @@ int main (int argc, char* argv[])
 					break;
 
 				case Actions::Open:
-					_player->area()->open_chest (what_action);
+					if (what_action == "spell book")
+						_player->list_spells();
+					else
+						_player->area()->open_chest (what_action);
+
 					break;
 
 				case Actions::CheckBag:
@@ -441,6 +447,9 @@ void display_help ()
 	std::cout << "$ pick up 'item name' [Eg. 'pick up Sword Of Truth'] - to pick up an Item." << std::endl;
 	std::cout << "$ drop 'item name' - to drop an Item." << std::endl;
 	std::cout << "$ use 'item name' - to use an Item. Remember, only some items are usable!" << std::endl;
+	std::cout << "$ open 'chest name' - to open chests in the world." << std::endl;
+	std::cout << "$ open spell book - to open your spell book to see your spells." << std::endl;
+	std::cout << "$ check bag - to open your bag with items." << std::endl;
 	std::cout << "$ quit - to quit the game." << std::endl;
 	std::cout << "-------------------------------------------------------" << std::endl;
 	std::cout << std::endl;

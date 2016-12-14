@@ -36,12 +36,10 @@ namespace Game
 		public:
 
 			Player ();
-//			~Player ();
 			Player (const std::string &name, const std::string &race, int hp, int mana, int armor,
 					int damage, int stam, std::shared_ptr <Area> area, int fire_res = 0,
 					 int frost_res = 0, int shadow_res = 0);
 
-			//void use_item (std::string);
 			int mana () const { return _mana; }
 			void change_mana (int mana)
 			{
@@ -51,14 +49,13 @@ namespace Game
 					_mana = 0;
 			}
 			void fight (Character &);
-		/*	std::string type () const;
-			void talk_to (Character &);
+			/*void talk_to (Character &);
 			void action ();*/
 			bool pick_up (Keepable &) override;
 			bool drop (Keepable &) override;
-			//Keepable & get_item (std::string &);
 			void use (Keepable &);
-
+			
+			void list_spells () const;
 			void section_input (std::string, std::string &, std::string &);
 
 	};

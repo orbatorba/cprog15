@@ -9,9 +9,7 @@
 namespace Game
 {
 
-	Player::Player () { }
-
-//	Player::~Player () { }
+	Player::Player () { initialize (); has_mana = true; }
 
 	Player::Player (const std::string &name, const std::string &race, int hp, int mana, int armor,
 			int damage, int stam, std::shared_ptr <Area> area, int fire_res, int frost_res, int shadow_res) :
@@ -32,7 +30,7 @@ namespace Game
 		Frostbolt.mana_cost = 15; Frostbolt.damage = 100;
 		Frostbolt.element = element_t::FROST;
 
-		Fireball.mana_cost = 15; Fireball.damage = 120;
+		Fireball.mana_cost = 25; Fireball.damage = 120;
 		Fireball.element = element_t::FIRE;
 
 		Meteor.mana_cost = 150; Meteor.damage = 250;
@@ -64,6 +62,38 @@ namespace Game
 		create_spells ();
 
 	}
+		
+	void Player::list_spells () const
+	{
+		std::cout << std::endl;
+		std::cout << "--------------------- SPELL BOOK --------------------------"<< std::endl;
+		std::cout << "   Name    | Base dmg | Mana cost | Reduce attack | Element "  << std::endl;
+		for (const auto& pair : _spells)
+		{
+			std::cout << pair.first << "           " << pair.second.damage
+			<< "	   " << pair.second.mana_cost << "           " <<  pair.second.reduce_attack 
+			<< "       ";
+			
+			switch (pair.second.element)
+			{
+				case element_t::FIRE:
+					std::cout << "Fire" << std::endl;
+					break;
+				case element_t::FROST:
+					std::cout << "Frost" << std::endl;
+					break;
+				case element_t::SHADOW:
+					std::cout << "Shadow" << std::endl;
+					break;
+				default:
+					break;	
+			}
+			
+		}
+		std::cout << "----------------------------------------------------------- " << std::endl;
+		std::cout << std::endl;
+	}
+
 	void Player::fight (Character & other)
 	{
 		std::cout << "You are in combat with " << other.name() << " which is a " << other.race()
@@ -94,7 +124,7 @@ namespace Game
 			action.clear ();
 			spell.clear ();
 			Spell current_spell;
-
+			std::cout << std::endl;
 			section_input (input, action, spell);
 
 			try
@@ -138,7 +168,7 @@ namespace Game
 									continue;
 								}
 								std::cout << "Your body enflames as you call down a giant"
-								<< " Meteor from the sky on " << other.name() << "!"
+								<< " Meteor from the sky on " << other.name() << "! \n"
 								<< std::endl;	
 								other.spell_dmg_taken (current_spell.damage + _spell_power,
 														element_t::FIRE);
@@ -155,7 +185,7 @@ namespace Game
 								
 								std::cout << "You freeze " << other.name() 
 								<< " and reduce his base damage by " << current_spell.reduce_attack
-								<< std::endl;
+								<< "\n" <<std::endl;
 								other.spell_dmg_taken (current_spell.damage + _spell_power,
 														element_t::FROST);
 								
@@ -184,7 +214,7 @@ namespace Game
 
 						other.damage_taken (this->_damage + _attack_power);
 						this->_stamina -= 10;
-						std::cout << "Nice swing! You hit " << other.name () << "!" << std::endl;
+						std::cout << "Nice swing! You hit " << other.name () << "! \n" << std::endl;
 						break;
 
 					case Verbs_t::flee_t:
@@ -220,7 +250,7 @@ namespace Game
 			{
 				//other.state = state_t::DEAD;
 				other.die ();
-				std::cout << "You have defeated " << other.name () << " in combat!" << std::endl;
+				std::cout << "You have defeated " << other.name () << " in combat! \n" << std::endl;
 				this->state = state_t::IDLE;
 				break;
 			}
