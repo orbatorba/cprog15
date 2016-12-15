@@ -234,6 +234,9 @@ int main (int argc, char* argv[])
 
 			std::cout << " - 'I will not take part of your fear towards the unknown, Guardian. We can not afford that anymore, and you know it aswell! I shall travel to Azshara, and explore the true story of my bloodline.'" << std::endl;
 			std::cout << " - 'So be it, Wizard...'" << std::endl;
+
+			std::cout << "\n\n CONGRATULATIONS!! You have completed The Quest for Magic, and proven yourself to the Kirin'Tor! " << std::endl;
+			std::cout << "The next expansion of the series, 'The Journey through Azshara' will be released in the next lunar eclipse..." << std::endl;
 			
 			delete_characters ();
             cleanup_areas ();
